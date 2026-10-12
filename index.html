@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>LINKA 30 DAYS CHECK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600&display=swap">
+<style>
+/* Layout: single phone column; today's check first, then week, calendar, review, self-care */
+:root{
+  --bg:#faf7f3; --card:#ffffff; --milk:#f3ebe3; --pale:#f6e9ea; --ink:#443d3b; --muted:#857a76;
+  --rose:#b88992; --rose-ink:#9a6c76; --line:#ebe2db; --sage:#e7efe7; --sage-line:#c8dac8; --sage-ink:#5f7a66;
+  --hero-a:#f3e6e4; --hero-b:#f9f3eb; --on-rose:#ffffff; --shadow:0 3px 18px rgba(77,52,32,.05);
+  --display:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho",serif;
+  --body:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1f1b1a; --card:#2a2524; --milk:#332c2a; --pale:#3a2c2f; --ink:#f0e8e4; --muted:#b3a7a2;
+  --rose:#c9979f; --rose-ink:#e1b4bb; --line:#3d3533; --sage:#2c3a30; --sage-line:#486150; --sage-ink:#a9c7b0;
+  --hero-a:#352a2b; --hero-b:#2d2725; --on-rose:#2a1f21; --shadow:none; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1f1b1a; --card:#2a2524; --milk:#332c2a; --pale:#3a2c2f; --ink:#f0e8e4; --muted:#b3a7a2;
+  --rose:#c9979f; --rose-ink:#e1b4bb; --line:#3d3533; --sage:#2c3a30; --sage-line:#486150; --sage-ink:#a9c7b0;
+  --hero-a:#352a2b; --hero-b:#2d2725; --on-rose:#2a1f21; --shadow:none; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6;padding-inline:16px;padding-top:env(safe-area-inset-top,0px)}
+main{max-width:480px;margin:0 auto;padding-block:20px 64px;display:flex;flex-direction:column;gap:16px}
+.brand{text-align:center;font-size:11px;letter-spacing:.32em;color:var(--muted)}
+.demo{background:var(--milk);border-radius:12px;padding:10px 14px;font-size:12px;color:var(--muted);line-height:1.7}
+.hero{background:linear-gradient(135deg,var(--hero-a),var(--hero-b));padding:24px 22px;border-radius:22px}
+.eyebrow{letter-spacing:.18em;font-size:11px;color:var(--rose-ink)}
+h1{font-family:var(--display);font-weight:500;font-size:26px;line-height:1.45;margin:10px 0 6px;text-wrap:balance}
+h1 span{white-space:nowrap}
+.sub{color:var(--muted);font-size:13px}
+.dayline{display:flex;justify-content:space-between;align-items:center;margin-top:16px;gap:8px}
+.daybig{font-family:var(--display);font-size:20px;font-variant-numeric:tabular-nums}
+.daybig small{font-size:12px;color:var(--muted);margin-left:4px}
+.tag{background:var(--card);border-radius:99px;padding:6px 12px;font-size:12px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px 18px;box-shadow:var(--shadow)}
+h2{font-family:var(--display);font-size:19px;font-weight:500;margin:0 0 4px}
+.hint{font-size:12px;color:var(--muted);line-height:1.7;margin:0 0 12px}
+.habits{display:flex;flex-direction:column;gap:10px}
+.habit{display:flex;gap:12px;align-items:center;width:100%;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 13px;text-align:left;color:var(--ink);font:inherit;cursor:pointer;transition:background .15s,border-color .15s}
+.habit[aria-pressed="true"]{background:var(--pale);border-color:var(--rose)}
+.habit:disabled{opacity:.55;cursor:default}
+.tick{display:grid;place-items:center;flex:0 0 28px;height:28px;border:1.5px solid var(--line);border-radius:50%;color:var(--on-rose);font-size:15px}
+.habit[aria-pressed="true"] .tick{background:var(--rose);border-color:var(--rose)}
+.habit strong{display:block;font-size:15px;font-weight:600}
+.habit small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.when{font-size:11px;letter-spacing:.12em;color:var(--rose-ink);margin-right:6px;font-weight:600}
+.progress{height:8px;border-radius:99px;background:var(--milk);overflow:hidden;margin:14px 0 6px}
+.fill{height:100%;width:0;background:var(--rose);transition:width .25s}
+.summary{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}
+.msg{margin:12px 0 0;padding:12px 14px;border-radius:12px;background:var(--milk);font-size:13px;line-height:1.7;min-height:46px}
+.msg b{font-family:var(--display);font-weight:500;color:var(--rose-ink)}
+.backtoday{margin-top:10px;background:none;border:0;color:var(--rose-ink);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer;padding:0}
+/* week goals */
+.goals{display:flex;flex-direction:column;gap:12px}
+.goal{display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center}
+.goal .nm{font-size:14px;font-weight:600}
+.goal .ct{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.pips{grid-column:1/-1;display:flex;gap:5px}
+.pip{width:18px;height:8px;border-radius:4px;background:var(--milk)}
+.pip.on{background:var(--rose)}
+.chip{font-size:11px;padding:2px 9px;border-radius:99px;background:var(--sage);color:var(--sage-ink);border:1px solid var(--sage-line);margin-left:6px;font-weight:500}
+.totals{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line);text-align:center}
+.totals b{display:block;font-family:var(--display);font-size:22px;font-weight:500;color:var(--rose-ink);font-variant-numeric:tabular-nums}
+.totals span{font-size:10.5px;color:var(--muted);line-height:1.4;display:block}
+/* calendar */
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.dow{text-align:center;font-size:11px;color:var(--muted)}
+.cell{border:1px solid var(--line);border-radius:9px;min-height:42px;background:var(--card);color:var(--ink);font:inherit;font-size:12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.2;padding:2px 0;font-variant-numeric:tabular-nums}
+.cell small{font-size:9px;color:var(--muted)}
+.cell.done{background:var(--sage);border-color:var(--sage-line)}
+.cell.partial{background:var(--pale);border-color:var(--rose)}
+.cell.today{font-weight:700}
+.cell.selected{outline:2px solid var(--rose);outline-offset:1px}
+.cell:disabled{color:var(--muted);background:transparent;border-style:dashed;cursor:default;opacity:.6}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11px;color:var(--muted);margin-top:12px}
+.sw{display:inline-block;width:12px;height:12px;border-radius:4px;vertical-align:-2px;margin-right:5px;border:1px solid var(--line)}
+/* review */
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tab{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:6px 12px;font:inherit;font-size:12px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--rose);border-color:var(--rose);color:var(--on-rose)}
+.tab:disabled{opacity:.45;cursor:default}
+.qlabel{font-size:13px;margin:4px 0 8px}
+.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.sc{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:10px 0 8px;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+.sc b{font-family:var(--display);font-size:18px;font-weight:500}
+.sc span{font-size:10px;color:var(--muted);min-height:14px}
+.sc[aria-pressed="true"]{background:var(--pale);border-color:var(--rose)}
+textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;background:var(--card);font:inherit;font-size:14px;color:var(--ink);resize:vertical;min-height:76px;margin-top:10px}
+.btn{background:var(--rose);border:0;border-radius:12px;color:var(--on-rose);padding:13px 16px;font:inherit;font-weight:600;cursor:pointer;width:100%;margin-top:12px}
+.btn.secondary{background:var(--milk);color:var(--ink);font-weight:500}
+.btn.danger{background:var(--pale);color:var(--rose-ink)}
+.small{font-size:12px;color:var(--muted);margin:8px 0 0}
+/* self care */
+details{border-top:1px solid var(--line);padding:12px 0}
+details:first-of-type{border-top:0;padding-top:4px}
+summary{cursor:pointer;font-weight:600;font-size:14px;list-style:none;display:flex;justify-content:space-between;gap:8px}
+summary::after{content:"＋";color:var(--rose-ink)}
+details[open] summary::after{content:"－"}
+details ol{margin:8px 0 0;padding-left:20px;font-size:13px;line-height:1.9}
+details p{margin:6px 0 0;font-size:12px;color:var(--sage-ink)}
+.foot{font-size:11px;color:var(--muted);line-height:1.7;margin:4px}
+.confirm{display:flex;gap:8px}
+.confirm .btn{margin-top:10px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:99px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+button:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--rose);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+  <div class="brand">LINKA BODY DESIGN</div>
+
+  <div class="panel" id="statusBox"><p class="hint" id="statusText" style="margin:0">記録を読み込んでいます…</p></div>
+
+  <section class="panel" id="consentBox" hidden aria-labelledby="h-consent">
+    <h2 id="h-consent">はじめに</h2>
+    <p class="hint" style="font-size:13px">この30日チェックで記録した内容（習慣のチェック、すっきり感、メモ）は、LINKAがあなたのサポートのためだけに使います。記録はLINKAが管理するGoogleアカウントに保管し、第三者に渡すことはありません。記録の削除をご希望のときは、LINEでお知らせください。</p>
+    <button class="btn" id="consentBtn">同意して始める</button>
+  </section>
+
+  <div id="app" hidden>
+  <header class="hero">
+    <div class="eyebrow">YOUR PERSONAL 30 DAYS</div>
+    <h1><span>小さな習慣が、</span><br><span>これからの私を</span><span>つくる。</span></h1>
+    <div class="sub" id="subName"></div>
+    <div class="dayline"><span class="daybig" id="dayLabel"></span><span class="tag" id="dateLabel"></span></div>
+  </header>
+
+  <section class="panel" aria-labelledby="h-today">
+    <h2 id="h-today">今日の小さな一歩</h2>
+    <p class="hint" id="todayHint">できたことをタップするだけで記録されます。</p>
+    <div class="habits" id="habits"></div>
+    <div class="progress"><div class="fill" id="fill"></div></div>
+    <div class="summary"><span id="countLabel">今日の実践</span><strong id="count">0 / 3</strong></div>
+    <p class="msg" id="msg" aria-live="polite"></p>
+    <button class="backtoday" id="backToday" hidden>今日の記録に戻る</button>
+  </section>
+
+  <section class="panel" aria-labelledby="h-week">
+    <h2 id="h-week">今週の目標</h2>
+    <p class="hint" id="weekHint"></p>
+    <div class="goals" id="goals"></div>
+    <div class="totals">
+      <div><b id="tRec">0</b><span>記録した日</span></div>
+      <div><b id="t0">0</b><span>朝の一品</span></div>
+      <div><b id="t1">0</b><span>昼の5分</span></div>
+      <div><b id="t2">0</b><span>夜の入浴</span></div>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="h-cal">
+    <h2 id="h-cal">30日カレンダー</h2>
+    <p class="hint">日付をタップすると、その日の記録を見直して直せます。空白は「未記録」で、失敗ではありません。</p>
+    <div class="days" id="calendar"></div>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--sage);border-color:var(--sage-line)"></i>3つできた日</span>
+      <span><i class="sw" style="background:var(--pale);border-color:var(--rose)"></i>1〜2つできた日</span>
+      <span><i class="sw" style="background:var(--card)"></i>未記録</span>
+    </div>
+  </section>
+
+  <section class="panel" aria-labelledby="h-rev">
+    <h2 id="h-rev">週に一度の振り返り</h2>
+    <p class="hint">今の実感で大丈夫です。点数の良し悪しはありません。</p>
+    <div class="tabs" role="tablist" id="tabs"></div>
+    <div id="weekly">
+      <p class="qlabel">この1週間の、朝のすっきり感は？</p>
+      <div class="scale" id="scale"></div>
+      <textarea id="memo" placeholder="続けやすかったこと、気づいたこと（任意）"></textarea>
+    </div>
+    <div id="final" hidden>
+      <p class="qlabel">カルテの3つの質問に答えてみましょう。</p>
+      <textarea id="fq1" placeholder="Q1 朝の疲れやすさは、どう変わった？"></textarea>
+      <textarea id="fq2" placeholder="Q2 いちばん続けやすかった習慣は？"></textarea>
+      <textarea id="fq3" placeholder="Q3 次の30日も続けたいことは？"></textarea>
+    </div>
+    <button class="btn secondary" id="saveReview">振り返りを保存</button>
+    <p class="small" id="reviewSaved" aria-live="polite"></p>
+  </section>
+
+  <section class="panel" aria-labelledby="h-care">
+    <h2 id="h-care">3分セルフケア</h2>
+    <p class="hint">カルテ6ページのケアです。「気持ちいい」と感じる圧で。</p>
+    <details><summary>朝｜フェイスラインをなでおろす</summary><ol><li>手のひらを温める</li><li>あご先から耳の下へ、やさしくなでる</li><li>耳の下から鎖骨へ流す</li></ol><p>左右5回ずつ／約1分</p></details>
+    <details><summary>昼｜首すじ〜肩をゆるめる</summary><ol><li>息を吐きながら肩をすくめる</li><li>ストンと力を抜く</li><li>首を左右にゆっくり傾ける</li></ol><p>3セット／約1分</p></details>
+    <details><summary>夜｜入浴後のふくらはぎケア</summary><ol><li>足首からひざ裏へ、両手で包むようにさする</li><li>ひざ裏を軽く押す</li><li>深呼吸を3回</li></ol><p>左右各1分</p></details>
+  </section>
+
+  <p class="foot">このページは生活習慣の記録のためのもので、健康状態の診断や医療上の評価は行いません。気になる症状が続くときは医療機関にご相談ください。</p>
+  </div>
+</main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(()=>{'use strict';
+// ▼ STEP3で発行された「ウェブアプリのURL」をここに入れます
+const API_URL = 'https://script.google.com/macros/s/AKfycbyn3pXvAAtrcezMQJ3wd7mmH7cBDgeBlsflmqpYu3ZOG_ZKSYpqEd6e2sTTEzJMNk38/exec';
+
+const DAY=86400000;
+const HABITS=[
+  {when:'朝',name:'たんぱく質を一品',sub:'卵・納豆・ヨーグルトなど',goal:4,unit:'週4日'},
+  {when:'昼',name:'5分の身体リセット',sub:'立つ・伸ばす・ゆっくり歩く',goal:5,unit:'平日1回'},
+  {when:'夜',name:'就寝1〜2時間前の入浴',sub:'上がったら照明を少し落とす',goal:3,unit:'週3日'}];
+const SHORT=['朝の一品','昼の5分','夜の入浴'];
+const WEEKS=[[1,7],[8,14],[15,21],[22,30]];
+const MSG_ONE=['小さな一歩、ちゃんと記録できました。','今日のあなたに、ひとつ花まる。','できたことに目を向けられていますね。'];
+const MSG_ALL='<b>3つすべてできた日。</b>身体がゆるむ時間を、自分でつくれましたね。';
+const LABELS=['とても重い','','ふつう','','すっきり'];
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+const key=new URLSearchParams(location.search).get('k')||'';
+
+let data={days:{},reviews:{}}, start, todayIdx, selected, reviewTab=0, toastT;
+
+function status(t){$('statusBox').hidden=false;$('statusText').textContent=t}
+function toast(t){const el=$('toast');el.textContent=t;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),1800)}
+async function api(body){
+  const res=await fetch(API_URL,{method:'POST',body:JSON.stringify(Object.assign({k:key},body))});
+  const j=await res.json(); if(!j.ok) throw new Error(j.error||'error'); return j;
+}
+
+// 日本時間の「今日」
+function jstToday(){const n=new Date(Date.now()+9*3600000);return Date.UTC(n.getUTCFullYear(),n.getUTCMonth(),n.getUTCDate())}
+function parseYmd(s){const p=s.split('-').map(Number);return Date.UTC(p[0],p[1]-1,p[2])}
+const dateFor=i=>new Date(start+(i-1)*DAY);
+const fmt=d=>`${d.getUTCMonth()+1}月${d.getUTCDate()}日（${'日月火水木金土'[d.getUTCDay()]}）`;
+const weekOf=i=>WEEKS.findIndex(([a,b])=>i>=a&&i<=b);
+const dayArr=i=>data.days[i]||[false,false,false];
+const lastIdx=()=>Math.min(todayIdx,30);
+
+async function boot(){
+  if(!API_URL){status('準備中です（API_URLが未設定です）。');return}
+  if(!key){status('このページは、LINKAからお送りした専用のURLから開いてください。');return}
+  try{
+    const res=await fetch(API_URL+'?k='+encodeURIComponent(key));
+    const j=await res.json();
+    if(!j.ok){status(j.error==='not_found'?'このURLは使えません。お手数ですが、LINEでLINKAにお知らせください。':'読み込みに失敗しました。少し時間をおいて開き直してください。');return}
+    data={days:j.days||{},reviews:j.reviews||{}};
+    start=parseYmd(j.start);
+    todayIdx=Math.floor((jstToday()-start)/DAY)+1;
+    $('subName').textContent=`${j.name}さんの30日チェック`;
+    if(todayIdx<1){status(`30日チェックは ${fmt(new Date(start))} から始まります。その日になったら、もう一度開いてください。`);return}
+    selected=lastIdx(); reviewTab=Math.min(weekOf(lastIdx()),3);
+    if(!j.consented){$('statusBox').hidden=true;$('consentBox').hidden=false;return}
+    showApp();
+  }catch(e){status('読み込みに失敗しました。電波のよい場所で、開き直してください。')}
+}
+$('consentBtn').onclick=async()=>{
+  $('consentBtn').disabled=true;
+  try{await api({type:'consent'});$('consentBox').hidden=true;showApp()}
+  catch(e){$('consentBtn').disabled=false;toast('通信できませんでした。もう一度お試しください')}
+};
+function showApp(){$('statusBox').hidden=true;$('app').hidden=false;renderAll();setMsg()}
+
+function renderToday(){
+  const isToday=selected===todayIdx, d=dateFor(selected);
+  $('dayLabel').innerHTML=`DAY ${pad(selected)}<small>/ 30</small>`;
+  $('dateLabel').textContent=(isToday?'今日 ':'')+fmt(d);
+  $('h-today').textContent=isToday?'今日の小さな一歩':`${d.getUTCMonth()+1}月${d.getUTCDate()}日の記録`;
+  $('todayHint').textContent=isToday?'できたことをタップするだけで記録されます。':'記録を見直しています。タップで変更すると、すぐに保存されます。';
+  $('countLabel').textContent=isToday?'今日の実践':'この日の実践';
+  $('backToday').hidden=isToday||todayIdx>30;
+  const a=dayArr(selected),root=$('habits');root.innerHTML='';
+  HABITS.forEach((h,k)=>{
+    const b=document.createElement('button');b.type='button';b.className='habit';b.id='habit'+k;
+    b.setAttribute('aria-pressed',String(a[k]));
+    b.innerHTML=`<span class="tick" aria-hidden="true">${a[k]?'✓':''}</span><span><strong><span class="when">${h.when}</span>${h.name}</strong><small>${h.sub}</small></span>`;
+    b.onclick=()=>toggle(k);root.append(b);
+  });
+  const n=a.filter(Boolean).length;$('fill').style.width=(n/3*100)+'%';$('count').textContent=`${n} / 3`;
+}
+function setMsg(){
+  const n=dayArr(selected).filter(Boolean).length;
+  $('msg').innerHTML=n===3?MSG_ALL:n>0?MSG_ONE[(selected+n)%MSG_ONE.length]+' ほかの習慣も、できたらタップしてくださいね。':(selected===todayIdx?'今日できたことがあれば、タップしてみましょう。できない日があっても大丈夫です。':'この日は未記録です。思い出せたら、できたことをタップしてください。');
+}
+async function toggle(k){
+  const day=selected, before=dayArr(day).slice(), after=before.slice(); after[k]=!after[k];
+  data.days[day]=after; renderToday();renderGoals();renderCalendar();setMsg();
+  try{await api({type:'day',day,values:after});toast('記録しました')}
+  catch(e){data.days[day]=before;renderToday();renderGoals();renderCalendar();setMsg();toast('通信できませんでした。もう一度タップしてください')}
+}
+function renderGoals(){
+  const w=weekOf(lastIdx()),[s,e]=WEEKS[w];
+  $('h-week').textContent=`今週の目標（${w+1}週目）`;
+  $('weekHint').textContent=`DAY ${s}〜${e}｜カルテで決めた目標に対する回数です。`;
+  const root=$('goals');root.innerHTML='';
+  HABITS.forEach((h,k)=>{let c=0;for(let i=s;i<=e;i++)if(dayArr(i)[k])c++;
+    let pips='';for(let j=0;j<h.goal;j++)pips+=`<i class="pip${j<c?' on':''}"></i>`;
+    const div=document.createElement('div');div.className='goal';
+    div.innerHTML=`<span class="nm">${SHORT[k]}${c>=h.goal?'<span class="chip">達成</span>':''}</span><span class="ct">${c}回／目標 ${h.unit}</span><span class="pips" aria-hidden="true">${pips}</span>`;
+    root.append(div)});
+  const all=Object.values(data.days);
+  $('tRec').textContent=all.filter(a=>a.some(Boolean)).length;
+  [0,1,2].forEach(k=>$('t'+k).textContent=all.filter(a=>a[k]).length);
+}
+function renderCalendar(){
+  const root=$('calendar');root.innerHTML='';
+  '月火水木金土日'.split('').forEach(x=>{const e=document.createElement('div');e.className='dow';e.textContent=x;root.append(e)});
+  const off=(new Date(start).getUTCDay()+6)%7;for(let i=0;i<off;i++)root.append(document.createElement('div'));
+  for(let i=1;i<=30;i++){
+    const a=data.days[i],n=a?a.filter(Boolean).length:0,d=dateFor(i),b=document.createElement('button');
+    b.type='button';b.id='cell'+i;
+    b.className='cell'+(n===3?' done':n>0?' partial':'')+(i===todayIdx?' today':'')+(i===selected?' selected':'');
+    b.innerHTML=`${d.getUTCDate()}<small>${i===todayIdx?'今日':(d.getUTCDate()===1||i===1?(d.getUTCMonth()+1)+'月':'')}</small>`;
+    b.setAttribute('aria-label',`${fmt(d)} ${i>todayIdx?'まだ先の日':n?n+'つ実践':'未記録'}`);
+    if(i>todayIdx)b.disabled=true;
+    b.onclick=()=>{selected=i;renderToday();renderCalendar();setMsg();$('h-today').scrollIntoView({behavior:'smooth',block:'center'})};
+    root.append(b);
+  }
+}
+function renderReview(){
+  const tabs=$('tabs');tabs.innerHTML='';
+  ['1週目','2週目','3週目','4週目','30日後'].forEach((t,w)=>{
+    const b=document.createElement('button');b.type='button';b.className='tab';b.setAttribute('role','tab');b.id='tab'+w;b.textContent=t;
+    b.setAttribute('aria-selected',String(w===reviewTab));
+    if(w<4&&w>weekOf(lastIdx()))b.disabled=true;
+    b.onclick=()=>{reviewTab=w;$('reviewSaved').textContent='';renderReview()};tabs.append(b)});
+  const fin=reviewTab===4;$('weekly').hidden=fin;$('final').hidden=!fin;
+  if(fin){[1,2,3].forEach(q=>$('fq'+q).value=(data.reviews['Q'+q]||{}).memo||'')}
+  else{
+    const r=data.reviews[String(reviewTab+1)]||{};$('memo').value=r.memo||'';
+    const sc=$('scale');sc.innerHTML='';
+    for(let v=1;v<=5;v++){const b=document.createElement('button');b.type='button';b.className='sc';b.id='sc'+v;
+      b.setAttribute('aria-pressed',String(r.feel===v));b.innerHTML=`<b>${v}</b><span>${LABELS[v-1]}</span>`;
+      b.onclick=()=>{const cur=Object.assign({},data.reviews[String(reviewTab+1)]);cur.feel=v;cur.memo=$('memo').value;data.reviews[String(reviewTab+1)]=cur;renderReview()};
+      sc.append(b)}
+  }
+}
+$('saveReview').onclick=async()=>{
+  const btn=$('saveReview');btn.disabled=true;$('reviewSaved').textContent='保存しています…';
+  try{
+    if(reviewTab===4){for(const q of [1,2,3]){const memo=$('fq'+q).value;await api({type:'review',week:'Q'+q,memo});data.reviews['Q'+q]={feel:null,memo}}}
+    else{const w=String(reviewTab+1),cur=Object.assign({},data.reviews[w]);cur.memo=$('memo').value;await api({type:'review',week:w,feel:cur.feel||'',memo:cur.memo});data.reviews[w]=cur}
+    $('reviewSaved').textContent='振り返りを保存しました。LINKAにも届いています。';toast('保存しました');
+  }catch(e){$('reviewSaved').textContent='通信できませんでした。もう一度「振り返りを保存」を押してください。'}
+  btn.disabled=false;
+};
+$('backToday').onclick=()=>{selected=todayIdx;renderToday();renderCalendar();setMsg()};
+function renderAll(){renderToday();renderGoals();renderCalendar();renderReview()}
+boot();
+})();
+</script>
+</body>
+</html>
